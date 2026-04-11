@@ -1,0 +1,224 @@
+{
+  "metadata": {
+    "description": "美股底部量化驗證 - 每日數據收集檔",
+    "usage": "每個交易日收盤後更新當天數據，保留最近7個交易日。驗證邏輯基於7天滾動窗口判斷是否滿足底部條件。",
+    "last_updated": "2026-04-02",
+    "data_source": "公開市場數據 + 大叔美股筆記指標框架"
+  },
+
+  "daily_data": {
+    "2026-03-25": {
+      "sp500": 6450,
+      "vix": 35.2,
+      "vix_high": 42.1,
+      "fear_greed": 12,
+      "put_call": 1.35,
+      "buffett": 200.8,
+      "cape": 31.5,
+      "hy_spread": 380,
+      "volume_spy_million": 145,
+      "notes": "VIX盤中一度觸及42.1，恐懼與貪婪指數跌至極度恐懼區間"
+    },
+    "2026-03-26": {
+      "sp500": 6520,
+      "vix": 32.0,
+      "vix_high": 35.2,
+      "fear_greed": 14,
+      "put_call": 1.28,
+      "buffett": 203.2,
+      "cape": 32.0,
+      "hy_spread": 372,
+      "volume_spy_million": 138,
+      "notes": "恐懼與貪婪指數觸及14，接近極度恐懼門檻15"
+    },
+    "2026-03-27": {
+      "sp500": 6480,
+      "vix": 33.5,
+      "vix_high": 36.8,
+      "fear_greed": 11,
+      "put_call": 1.42,
+      "buffett": 201.5,
+      "cape": 31.8,
+      "hy_spread": 395,
+      "volume_spy_million": 162,
+      "notes": "巨量拋售日，SPY成交量162M創近月新高，恐懼與貪婪跌破15"
+    },
+    "2026-03-28": {
+      "sp500": 6510,
+      "vix": 30.8,
+      "vix_high": 33.5,
+      "fear_greed": 13,
+      "put_call": 1.18,
+      "buffett": 202.8,
+      "cape": 31.9,
+      "hy_spread": 385,
+      "volume_spy_million": 128,
+      "notes": "縮量反彈，成交量較前日大幅下降"
+    },
+    "2026-03-31": {
+      "sp500": 6575,
+      "vix": 27.3,
+      "vix_high": 30.8,
+      "fear_greed": 16,
+      "put_call": 1.10,
+      "buffett": 204.5,
+      "cape": 32.3,
+      "hy_spread": 360,
+      "volume_spy_million": 118,
+      "notes": "大漲日，道瓊單日+1100點，停火希望推動反彈"
+    },
+    "2026-04-01": {
+      "sp500": 6575.32,
+      "vix": 25.52,
+      "vix_high": 28.1,
+      "fear_greed": 19,
+      "put_call": 1.08,
+      "buffett": 204.8,
+      "cape": 32.4,
+      "hy_spread": 352,
+      "volume_spy_million": 105,
+      "notes": "持續縮量，觀察是否形成縮量止跌型態"
+    },
+    "2026-04-02": {
+      "sp500": 6582.69,
+      "vix": 24.54,
+      "vix_high": 27.3,
+      "fear_greed": 18,
+      "put_call": 1.05,
+      "buffett": 205.3,
+      "cape": 32.5,
+      "hy_spread": 346,
+      "volume_spy_million": 98,
+      "notes": "VIX繼續回落，成交量進一步萎縮至98M，原油暴漲11%但股市撐住"
+    }
+  },
+
+  "checklist_verification": {
+    "description": "基於7天滾動數據的底部驗證邏輯，每項需說明判斷依據",
+
+    "items": [
+      {
+        "id": 1,
+        "name": "巴菲特指標回落至合理區間",
+        "target": "< 160%",
+        "logic": "7天內巴菲特指標是否曾跌至160%以下",
+        "7d_range": {"min": 200.8, "max": 205.3},
+        "current": 205.3,
+        "met": false,
+        "verdict": "7天最低200.8%，遠高於160%門檻，未滿足"
+      },
+      {
+        "id": 2,
+        "name": "CAPE 回落至 20-25x",
+        "target": "20-25x",
+        "logic": "7天內CAPE是否曾回落至25x以下",
+        "7d_range": {"min": 31.5, "max": 32.5},
+        "current": 32.5,
+        "met": false,
+        "verdict": "7天最低31.5x，仍遠高於25x，未滿足"
+      },
+      {
+        "id": 3,
+        "name": "VIX 噴出後底背離",
+        "target": "VIX曾突破40後，股市新低但VIX未新高",
+        "logic": "過去7天內VIX盤中高點是否曾>40，且之後SP500再探低時VIX高點下降",
+        "7d_vix_highs": [42.1, 35.2, 36.8, 33.5, 30.8, 28.1, 27.3],
+        "7d_sp500_lows": [6450, 6520, 6480, 6510, 6575, 6575, 6583],
+        "current_vix": 24.54,
+        "met": true,
+        "verdict": "3/25 VIX盤中觸42.1（噴出>40），之後SP500在3/27創新低6480但VIX高點僅36.8（未超42.1），形成底背離。後續VIX持續回落至24.54，確認背離成立"
+      },
+      {
+        "id": 4,
+        "name": "恐懼與貪婪指數極度恐懼",
+        "target": "≤ 15 且維持一段時間",
+        "logic": "7天內是否有至少2天恐懼與貪婪指數≤15",
+        "7d_values": [12, 14, 11, 13, 16, 19, 18],
+        "days_below_15": 4,
+        "current": 18,
+        "met": true,
+        "verdict": "7天內有4天低於15（最低11），已充分反映極度恐懼。目前回升至18但仍在恐懼區間"
+      },
+      {
+        "id": 5,
+        "name": "Put/Call Ratio 極端悲觀",
+        "target": "≥ 1.5 連續數日",
+        "logic": "7天內是否有至少2天Put/Call≥1.2且峰值≥1.5",
+        "7d_values": [1.35, 1.28, 1.42, 1.18, 1.10, 1.08, 1.05],
+        "max_7d": 1.42,
+        "days_above_1.2": 3,
+        "current": 1.05,
+        "met": false,
+        "verdict": "7天峰值1.42，有3天>1.2但未達1.5極端門檻。接近但未完全滿足"
+      },
+      {
+        "id": 6,
+        "name": "巨量換手 + 縮量止跌",
+        "target": "先放量崩跌（>150M），後縮量止跌（<110M）",
+        "logic": "7天內是否出現先巨量後縮量的量價背離型態",
+        "7d_volumes": [145, 138, 162, 128, 118, 105, 98],
+        "7d_sp500": [6450, 6520, 6480, 6510, 6575, 6575, 6583],
+        "peak_volume_date": "2026-03-27",
+        "peak_volume": 162,
+        "current_volume": 98,
+        "met": true,
+        "verdict": "3/27巨量162M伴隨崩跌至6480，之後連續4天縮量（128→118→105→98M）同時股價止跌回升（6510→6583），量價背離型態成立"
+      },
+      {
+        "id": 7,
+        "name": "高收益債利差見頂回落",
+        "target": "利差從峰值明顯收窄（>10%回落）",
+        "logic": "7天內HY OAS是否從峰值回落超過10%",
+        "7d_values": [380, 372, 395, 385, 360, 352, 346],
+        "peak": 395,
+        "current": 346,
+        "decline_pct": 12.4,
+        "met": true,
+        "verdict": "HY OAS從3/27峰值395bps回落至346bps（-12.4%），收窄幅度>10%，信用壓力緩解中"
+      },
+      {
+        "id": 8,
+        "name": "VIX 快速回落確認被動賣壓結束",
+        "target": "VIX從峰值回落至25以下",
+        "logic": "7天內VIX是否從>35的峰值快速回落至<25",
+        "7d_closes": [35.2, 32.0, 33.5, 30.8, 27.3, 25.52, 24.54],
+        "peak": 35.2,
+        "current": 24.54,
+        "crossed_below_25": true,
+        "met": true,
+        "verdict": "VIX從3/25的35.2快速回落至4/2的24.54（-30.3%），已跌破25關卡，被動賣壓基本結束"
+      }
+    ],
+
+    "summary": {
+      "met_count": 5,
+      "total": 8,
+      "status": "底部訊號逐漸浮現",
+      "key_missing": "巴菲特指標(205%)和CAPE(32.5x)仍遠高於合理區間，Put/Call峰值1.42未達1.5極端門檻",
+      "key_met": "VIX底背離確認、恐懼與貪婪曾達極度恐懼、巨量換手+縮量止跌成立、HY利差見頂回落、VIX回落<25",
+      "assessment": "技術性底部訊號已出現多數（5/8），但估值面仍嚴重偏高，且地緣風險（伊朗戰爭、油價）尚未解除。建議：可開始建立觀察名單，但不宜重倉進場。等待估值進一步修正或地緣催化劑出現。"
+    }
+  },
+
+  "instructions": {
+    "how_to_update": [
+      "1. 每個交易日收盤後（美東時間4:00PM後），新增當天的 daily_data 條目",
+      "2. 刪除超過7個交易日的舊數據，保持只有最近7天",
+      "3. 重新計算 checklist_verification 中每項的7天數據和判斷結果",
+      "4. 更新 summary 的 met_count 和 assessment",
+      "5. 將檔案另存為 bottom_checklist_YYYY-MM-DD.json（例如 bottom_checklist_2026-04-03.json）"
+    ],
+    "data_fields": {
+      "sp500": "S&P 500 收盤價",
+      "vix": "VIX 收盤價",
+      "vix_high": "VIX 盤中最高價（用於底背離判斷）",
+      "fear_greed": "CNN 恐懼與貪婪指數收盤讀數",
+      "put_call": "CBOE Put/Call Ratio（10日均線）",
+      "buffett": "巴菲特指標（Wilshire 5000 / GDP, %）",
+      "cape": "席勒本益比（Shiller CAPE Ratio）",
+      "hy_spread": "ICE BofA HY OAS（bps）",
+      "volume_spy_million": "SPY ETF 成交量（百萬股）",
+      "notes": "當天重要事件備註"
+    }
+  }
+}

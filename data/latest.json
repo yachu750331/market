@@ -1,0 +1,41 @@
+{
+  "meta": {
+    "date": "2026-04-02",
+    "prev_date": "2026-04-01",
+    "market_status": "closed",
+    "note": "Good Friday 4/3 休市，下次更新 4/6"
+  },
+  "indices": {
+    "sp500":  { "value": 6582.69, "prev": 6575.32, "name": "S&P 500", "sub": "標普500指數" },
+    "nasdaq": { "value": 21879.18, "prev": 21839.45, "name": "NASDAQ", "sub": "那斯達克綜合" },
+    "sox":    { "value": 7478.76, "prev": 7249.12, "name": "費城半導體", "sub": "PHLX SOX" }
+  },
+  "indicators": {
+    "buffett":    { "value": 205.3, "prev": 204.8, "threshold": { "green": 120, "yellow": 160, "red": 200 }, "unit": "%", "name": "巴菲特指標", "sub": "Wilshire 5000/GDP", "update_freq": "monthly" },
+    "cape":       { "value": 32.5, "prev": 32.4, "threshold": { "green": 20, "yellow": 25, "red": 30 }, "unit": "x", "name": "席勒本益比", "sub": "Shiller CAPE", "update_freq": "monthly" },
+    "vix":        { "value": 24.54, "prev": 25.52, "threshold": { "green": 20, "yellow": 30, "red": 40 }, "unit": "", "name": "VIX 恐慌指數", "sub": "S&P 500 隱含波動率" },
+    "fearGreed":  { "value": 18, "prev": 19, "threshold": { "green": 50, "yellow": 30, "red": 15 }, "unit": "", "name": "恐懼與貪婪", "sub": "CNN Fear & Greed", "invertColor": true },
+    "putCall":    { "value": 1.05, "prev": 1.08, "threshold": { "green": 0.7, "yellow": 0.9, "red": 1.2 }, "unit": "", "name": "Put/Call Ratio", "sub": "CBOE 選擇權比率" },
+    "sofr_iorb":  { "value": 2.8, "prev": 2.5, "threshold": { "green": 0, "yellow": 1, "red": 3 }, "unit": "bps", "name": "SOFR − IORB", "sub": "短端資金壓力", "update_freq": "weekly" },
+    "onrrp":      { "value": 148, "prev": 165, "threshold": { "green": 300, "yellow": 200, "red": 150 }, "unit": "B", "name": "ON RRP 餘額", "sub": "流動性緩衝墊", "invertColor": true, "update_freq": "weekly" },
+    "tga":        { "value": 720, "prev": 695, "threshold": { "green": 400, "yellow": 600, "red": 750 }, "unit": "B", "name": "TGA 餘額", "sub": "財政部帳戶", "update_freq": "weekly" },
+    "srf":        { "value": 2.1, "prev": 1.5, "threshold": { "green": 0, "yellow": 1, "red": 5 }, "unit": "B", "name": "SRF 使用量", "sub": "Fed 後備工具", "update_freq": "weekly" },
+    "us10y":      { "value": 4.31, "prev": 4.33, "threshold": { "green": 3.5, "yellow": 4.0, "red": 4.5 }, "unit": "%", "name": "美債 10Y 殖利率", "sub": "US Treasury 10Y" },
+    "us2y":       { "value": 3.79, "prev": 3.80, "threshold": { "green": 3.0, "yellow": 3.5, "red": 4.0 }, "unit": "%", "name": "美債 2Y 殖利率", "sub": "US Treasury 2Y" },
+    "spread2s10s":{ "value": 0.52, "prev": 0.53, "threshold": { "green": 0.5, "yellow": 0.2, "red": 0 }, "unit": "%", "name": "2Y-10Y 利差", "sub": "殖利率曲線斜率", "invertColor": true },
+    "breakeven":  { "value": 2.68, "prev": 2.62, "threshold": { "green": 2.0, "yellow": 2.5, "red": 3.0 }, "unit": "%", "name": "10Y 通膨預期", "sub": "Breakeven Inflation" },
+    "move":       { "value": 115, "prev": 110, "threshold": { "green": 80, "yellow": 100, "red": 120 }, "unit": "", "name": "MOVE Index", "sub": "美債波動率" },
+    "hySpread":   { "value": 346, "prev": 352, "threshold": { "green": 300, "yellow": 400, "red": 500 }, "unit": "bps", "name": "高收益債利差", "sub": "HY OAS Spread" },
+    "bloomberg":  { "value": -0.72, "prev": -0.65, "threshold": { "green": 0, "yellow": -0.5, "red": -1.0 }, "unit": "", "name": "彭博金融狀況", "sub": "Bloomberg FCI", "invertColor": true, "update_freq": "weekly" },
+    "gold":       { "value": 4623, "prev": 4750, "threshold": { "green": 4000, "yellow": 4800, "red": 5200 }, "unit": "$", "name": "黃金現貨", "sub": "XAU/USD" },
+    "wti":        { "value": 111.54, "prev": 100.12, "threshold": { "green": 70, "yellow": 85, "red": 100 }, "unit": "$", "name": "WTI 原油現金期貨", "sub": "CL1 Front Month" },
+    "brent":      { "value": 109.03, "prev": 101.16, "threshold": { "green": 75, "yellow": 90, "red": 105 }, "unit": "$", "name": "布蘭特原油現金期貨", "sub": "CO1 Front Month" },
+    "dxy":        { "value": 100.13, "prev": 99.50, "threshold": { "green": 100, "yellow": 103, "red": 106 }, "unit": "", "name": "美元指數", "sub": "DXY Index" }
+  },
+  "checklist_summary": {
+    "met": 5,
+    "total": 8,
+    "status": "底部訊號逐漸浮現",
+    "detail_file": "bottom_checklist_2026-04-02.json"
+  }
+}

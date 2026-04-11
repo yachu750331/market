@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<style>
+  @page { size: 420mm 297mm; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Noto Sans CJK TC", "Noto Sans CJK SC", "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", sans-serif;
+    background: #020617;
+    color: #e2e8f0;
+    width: 420mm;
+    height: 297mm;
+    overflow: hidden;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .header {
+    background: #0f172a;
+    border-bottom: 1px solid #1e293b;
+    padding: 8px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .header-left h1 { font-size: 16px; font-weight: 700; color: #f8fafc; letter-spacing: -0.5px; }
+  .header-left .sub { font-size: 8px; color: #64748b; font-family: 'Courier New', monospace; margin-top: 1px; }
+  .defcon { font-size: 14px; font-weight: 700; font-family: 'Courier New', monospace; letter-spacing: 2px; }
+  .defcon-sub { font-size: 8px; color: #64748b; font-family: 'Courier New', monospace; text-align: right; margin-top: 1px; }
+
+  .main { display: flex; gap: 8px; padding: 8px 12px; height: calc(297mm - 52px); }
+  .col { display: flex; flex-direction: column; gap: 6px; }
+  .col-1 { flex: 1; }
+  .col-2 { flex: 1; }
+  .col-3 { flex: 1.15; }
+
+  .section-label {
+    font-size: 7px; color: #64748b; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; font-family: 'Courier New', monospace;
+    margin-bottom: 2px; padding-left: 2px;
+  }
+
+  .cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+  .cards-grid.three-col { grid-template-columns: 1fr 1fr 1fr; }
+
+  .card {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    border: 1px solid #334155;
+    border-radius: 6px;
+    padding: 7px 9px;
+    position: relative;
+  }
+  .card.red-border { border-color: #ef444450; }
+  .card.red-border::before {
+    content: ''; position: absolute; top: 0; left: 4px; right: 4px; height: 1.5px;
+    background: linear-gradient(90deg, transparent, #ef4444, transparent);
+  }
+  .card .card-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 3px; }
+  .card .card-sub { font-size: 6px; color: #64748b; font-family: 'Courier New', monospace; }
+  .card .card-name { font-size: 8px; color: #e2e8f0; font-weight: 600; margin-top: 1px; }
+  .card .card-value { font-size: 17px; font-weight: 700; color: #f8fafc; font-family: 'Courier New', monospace; letter-spacing: -0.5px; margin: 2px 0 1px; }
+  .card .card-unit { font-size: 9px; color: #64748b; font-family: 'Courier New', monospace; }
+  .card .card-change { font-size: 7px; font-family: 'Courier New', monospace; }
+  .card .card-target { font-size: 5.5px; color: #475569; font-family: 'Courier New', monospace; margin-top: 3px; }
+
+  .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; }
+  .dot.red { background: #ef4444; box-shadow: 0 0 6px #ef444480; }
+  .dot.yellow { background: #eab308; box-shadow: 0 0 4px #eab30860; }
+  .dot.green { background: #22c55e; }
+
+  .change-up-bad { color: #ef4444; }
+  .change-down-good { color: #22c55e; }
+  .change-up-good { color: #22c55e; }
+  .change-down-bad { color: #ef4444; }
+
+  .bar-track { height: 2.5px; background: #020617; border-radius: 2px; margin-top: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 2px; }
+  .bar-fill.red { background: linear-gradient(90deg, #ef444490, #ef4444); }
+  .bar-fill.yellow { background: linear-gradient(90deg, #eab30890, #eab308); }
+  .bar-fill.green { background: linear-gradient(90deg, #22c55e90, #22c55e); }
+  .bar-labels { display: flex; justify-content: space-between; margin-top: 1px; }
+  .bar-labels .lbl-green { font-size: 6px; color: #22c55e; font-family: 'Courier New', monospace; }
+  .bar-labels .lbl-red { font-size: 6px; color: #ef4444; font-family: 'Courier New', monospace; }
+
+  /* Index cards */
+  .index-row { display: flex; gap: 5px; }
+  .index-card {
+    flex: 1; background: linear-gradient(135deg, #0f172a, #1e293b);
+    border: 1px solid #334155; border-radius: 6px; padding: 6px 9px;
+  }
+  .index-card .idx-sub { font-size: 6px; color: #64748b; font-family: 'Courier New', monospace; }
+  .index-card .idx-name { font-size: 9px; color: #e2e8f0; font-weight: 600; }
+  .index-card .idx-val { font-size: 16px; font-weight: 700; color: #f8fafc; font-family: 'Courier New', monospace; margin: 2px 0; }
+  .index-card .idx-change { font-size: 7px; font-family: 'Courier New', monospace; }
+
+  /* Checklist */
+  .checklist-box {
+    background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 7px 9px;
+  }
+  .checklist-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+  .checklist-title { font-size: 8px; font-weight: 700; color: #e2e8f0; }
+  .checklist-score { font-size: 8px; font-weight: 700; font-family: 'Courier New', monospace; padding: 1px 7px; border-radius: 10px; }
+  .score-red { background: #ef444420; color: #ef4444; }
+  .check-row { display: flex; align-items: center; gap: 5px; padding: 2.5px 0; }
+  .check-box {
+    width: 9px; height: 9px; border-radius: 2px; border: 1px solid #334155;
+    background: #020617; display: flex; align-items: center; justify-content: center;
+    font-size: 6px; flex-shrink: 0;
+  }
+  .check-box.met { background: #16653440; border-color: #22c55e50; color: #22c55e; }
+  .check-label { font-size: 7px; color: #94a3b8; flex: 1; }
+  .check-vals { font-size: 6px; color: #475569; font-family: 'Courier New', monospace; text-align: right; white-space: nowrap; }
+
+  /* Liquidity Combos */
+  .combo-box {
+    background: linear-gradient(135deg, #0f172a, #1a0a0a);
+    border: 1px solid #7f1d1d40; border-radius: 6px; padding: 7px 9px;
+  }
+  .combo-title { font-size: 8px; font-weight: 700; color: #fbbf24; margin-bottom: 5px; }
+  .combo-row { display: flex; align-items: center; gap: 6px; padding: 3px 0; border-bottom: 1px solid #1e293b; }
+  .combo-row:last-child { border-bottom: none; }
+  .combo-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .combo-label { font-size: 7px; color: #e2e8f0; flex: 1; }
+  .combo-badge { font-size: 6px; font-family: 'Courier New', monospace; font-weight: 700; white-space: nowrap; }
+
+  /* Rules */
+  .rules-box {
+    background: linear-gradient(135deg, #0f172a, #1a1a0a);
+    border: 1px solid #854d0e40; border-radius: 6px; padding: 7px 9px;
+  }
+  .rule-item { padding: 3px 0; }
+  .rule-num { font-size: 6px; color: #eab308; font-family: 'Courier New', monospace; font-weight: 700; }
+  .rule-text { font-size: 8px; color: #f8fafc; font-weight: 600; }
+  .rule-en { font-size: 6px; color: #64748b; font-style: italic; }
+
+  .footer {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    text-align: center; padding: 4px; font-size: 6px; color: #475569;
+    font-family: 'Courier New', monospace; border-top: 1px solid #1e293b;
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-left">
+    <h1>美股戰情儀表板</h1>
+    <div class="sub">US MARKET WAR ROOM &nbsp;|&nbsp; DATA AS OF 2026/04/02 CLOSE &nbsp;|&nbsp; 非即時報價</div>
+  </div>
+  <div style="text-align:right">
+    <div class="defcon" style="color:#f97316">DEFCON 2</div>
+    <div class="defcon-sub">RED 4 &nbsp;|&nbsp; YLW 13 &nbsp;|&nbsp; GRN 1</div>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- ═══════ COLUMN 1 ═══════ -->
+<div class="col col-1">
+
+  <!-- Major Indices -->
+  <div>
+    <div class="section-label">主要指數 MAJOR INDICES</div>
+    <div class="index-row">
+      <div class="index-card">
+        <div class="idx-sub">標普500指數</div>
+        <div class="idx-name">S&P 500</div>
+        <div class="idx-val">6,582.69</div>
+        <div class="idx-change" style="color:#22c55e">▲ 7.37 (+0.11%)</div>
+      </div>
+      <div class="index-card">
+        <div class="idx-sub">那斯達克綜合</div>
+        <div class="idx-name">NASDAQ</div>
+        <div class="idx-val">21,879.18</div>
+        <div class="idx-change" style="color:#22c55e">▲ 39.73 (+0.18%)</div>
+      </div>
+      <div class="index-card">
+        <div class="idx-sub">費城半導體指數</div>
+        <div class="idx-name">PHLX SOX</div>
+        <div class="idx-val">7,478.76</div>
+        <div class="idx-change" style="color:#22c55e">▲ 229.6 (+3.16%)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 估值 -->
+  <div>
+    <div class="section-label">估值與基本面 VALUATION</div>
+    <div class="cards-grid">
+      <div class="card red-border">
+        <div class="card-head"><div><div class="card-sub">Wilshire 5000/GDP</div><div class="card-name">巴菲特指標</div></div><div class="dot red"></div></div>
+        <div class="card-value">205.3 <span class="card-unit">%</span></div>
+        <div class="card-change change-up-bad">▼ 5.5 (-2.6%)</div>
+        <div class="bar-track"><div class="bar-fill red" style="width:100%"></div></div>
+        <div class="bar-labels"><span class="lbl-green">120</span><span class="lbl-red">200</span></div>
+        <div class="card-target">Target: &lt; 160%</div>
+      </div>
+      <div class="card red-border">
+        <div class="card-head"><div><div class="card-sub">Shiller CAPE</div><div class="card-name">席勒本益比</div></div><div class="dot red"></div></div>
+        <div class="card-value">32.5 <span class="card-unit">x</span></div>
+        <div class="card-change change-down-good">▼ 1.3 (-3.8%)</div>
+        <div class="bar-track"><div class="bar-fill red" style="width:100%"></div></div>
+        <div class="bar-labels"><span class="lbl-green">20</span><span class="lbl-red">30</span></div>
+        <div class="card-target">Target: 20-25x</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 恐慌情緒 -->
+  <div>
+    <div class="section-label">恐慌情緒與波動率 SENTIMENT</div>
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-head"><div><div class="card-sub">隱含波動率 30D</div><div class="card-name">VIX 恐慌指數</div></div><div class="dot yellow"></div></div>
+        <div class="card-value">24.54</div>
+        <div class="card-change change-down-good">▼ 0.98 (-3.8%)</div>
+        <div class="bar-track"><div class="bar-fill yellow" style="width:23%"></div></div>
+        <div class="bar-labels"><span class="lbl-green">20</span><span class="lbl-red">40</span></div>
+        <div class="card-target">Target: &gt; 40 噴出</div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div><div class="card-sub">CNN Fear &amp; Greed</div><div class="card-name">恐懼與貪婪</div></div><div class="dot yellow"></div></div>
+        <div class="card-value">18</div>
+        <div class="card-change change-down-bad">▼ 4 (-18.2%)</div>
+        <div class="bar-track"><div class="bar-fill red" style="width:91%"></div></div>
+        <div class="bar-labels"><span class="lbl-green">50</span><span class="lbl-red">15</span></div>
+        <div class="card-target">Target: &le; 15 極度恐懼</div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div><div class="card-sub">CBOE 選擇權</div><div class="card-name">Put/Call Ratio</div></div><div class="dot yellow"></div></div>
+        <div class="card-value">1.05</div>
+        <div class="card-change change-up-bad">▲ 0.10 (+10.5%)</div>
+        <div class="bar-track"><div class="bar-fill yellow" style="width:70%"></div></div>
+        <div class="bar-labels"><span class="lbl-green">0.7</span><span class="lbl-red">1.2</span></div>
+        <div class="card-target">Target: &ge; 1.5</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 流動性 -->
+  <div>
+    <div class="section-label">市場流動性 LIQUIDITY</div>
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-head"><div><div class="card-sub">短端資金壓力</div><div class="card-name">SOFR − IORB</div></div><div class="dot yellow"></div></div>
+        <div class="card-value">2.8 <span class="card-unit">bps</span></div>
+        <div class="card-change change-up-bad">▲ 1.3</div>
+        <div class="bar-track"><div class="bar-fill yellow" style="width:93%"></div></div>
+        <div class="bar-labels"><span class="lbl-green">0</span><span class="lbl-red">3</span></div>
+        <div class="card-target">Target: &lt; 0 bps</div>
+      </div>
+      <div class="card red-border">
+        <div class="card-head"><div><div class="card-sub">流動性緩衝墊</div><div class="card-name">ON RRP 餘額</div></div><div class="dot red"></div></div>
+        <div class="card-value">148 <span class="card-unit">B</span></div>
+        <div class="card-change change-down-bad">▼ 37 (-20.0%)</div>
+        <div class="bar-track"><div class="bar-fill red" style="width:100%"></div></div>
+        <div class="bar-labels"><span class="lbl-green">300</span><span class="lbl-red">150</span></div>
+        <div class="card-target">Target: &gt; 300B</div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div><div class="card-sub">財政部帳戶</div><div class="card-name">TGA 餘額</div></div><div class="dot yellow"></div></div>
+        <div class="card-value">720 <span class="card-unit">B</span></div>
+        <div class="card-change change-up-bad">▲ 40 (+5.9%)</div>
+        <div class="bar-track"><div class="bar-fill yellow" style="width:91%"></div></div>
+        <div class="bar-labels"><span class="lbl-green">400</span><span class="lbl-red">750</span></div>
+        <div class="card-target">Target: &lt; 400B</div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div><div class="card-sub">Fed 後備工具</div><div class="card-name">SRF 使用量</div></div><div class="dot yellow"></div></div>
+        <div class="card-value">2.1 <span class="card-unit">B</span></div>
+        <div class="card-change change-up-bad">▲ 1.3</div>
+        <div class="bar-track"><div class="bar-fill yellow" style="width:42%"></div></div>
+        <div class="bar-labels"><span class="lbl-green">0</span><span class="lbl-red">5</span></div>
+        <div class="card-target">Target: ≈ 0</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ COLUMN 2 ═══════ -->
+<div class="col col-2">
+
+  <!-- 利率 -->
+  <div>
+    <div class="section-label">利率與殖利率曲線 RATES</div>
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-head"><div><div class="card-sub">US Treasury 10Y</div><div class="card-name">美債 10Y 殖利率</div></div><div class="dot yellow"></div></div>
+        <div class="card-value">4.31 <span class="card-unit">%</span></div>
+        <div class="card-change change-up-bad">▼ 0.01 (-0.3%)</div>
+        <div class="bar-track"><div class="bar-fill yellow" style="width:81%"></div></div>
+        <div class="bar-labels"><span class="lbl-green">3.5</span><span class="lbl-red">4.5</span></div>
+        <div class="card-target">Target: &lt; 4.0%</div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div><div class="card-sub">US Treasury 2Y</div><div class="card-name">美債 2Y 殖利率</div></div><div class="dot yellow"></div></div>
+        <div class="card-value">3.79 <span class="card-unit">%</span></div>
+        <div class="card-change change-up-bad">▼ 0.01 (-0.3%)</div>
+        <div class="bar-track"><div class="bar-fill yellow" style="width:79%"></div></div>
+        <div class="bar-labels"><span class="lbl-green">3</span><span class="lbl-red">4</span></div>
+        <div class="card-target">Target: &lt; 3.5%</div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div><div class="card-sub">殖利率曲線斜率</div><div class="card-name">2Y-10Y 利差</div></div><div class="dot green"></div></div>
+        <div class="card-value">0.52 <span class="card-unit">%</span></div>
+        <div class="card-change change-up-good">▲ 0.00</div>
+        <div class="bar-track"><div class="bar-fill green" style="width:3%"></div></div>
+        <div class="bar-labels"><span class="lbl-green">0.5</span><span class="lbl-red">0</span></div>
+        <div class="card-target">觀察：倒掛結束後常伴衰退</div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div><div class="card-sub">Breakeven Inflation</div><div class="card-name">10Y 通膨預期</div></div><div class="dot yellow"></div></div>
+        <div class="card-value">2.68 <span class="card-unit">%</span></div>
+        <div class="card-change change-up-bad">▲ 0.13 (+5.1%)</div>
+        <div class="bar-track"><div class="bar-fill yellow" style="width:68%"></div></div>
+        <div class="bar-labels"><span class="lbl-green">2</span><span class="lbl-red">3</span></div>
+        <div class="card-target">Target: &lt; 2.5%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 信用 -->
+  <div>
+    <div class="section-label">信用與金融狀況 CREDIT</div>
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-head"><div><div class="card-sub">美債波動率</div><div class="card-name">MOVE Index</div></div><div class="dot yellow"></div></div>
+        <div class="card-value">115</div>
+        <div class="card-change change-up-bad">▲ 7 (+6.5%)</div>
+        <div class="bar-track"><div class="bar-fill yellow" style="width:88%"></div></div>
+        <div class="bar-labels"><span class="lbl-green">80</span><span class="lbl-red">120</span></div>
+        <div class="card-target">Target: &lt; 100</div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div><div class="card-sub">HY OAS Spread</div><div class="card-name">高收益債利差</div></div><div class="dot yellow"></div></div>
+        <div class="card-value">346 <span class="card-unit">bps</span></div>
+        <div class="card-change change-up-bad">▲ 16 (+4.8%)</div>
+        <div class="bar-track"><div class="bar-fill yellow" style="width:23%"></div></div>
+        <div class="bar-labels"><span class="lbl-green">300</span><span class="lbl-red">500</span></div>
+        <div class="card-target">Target: &lt; 350 bps</div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div><div class="card-sub">Bloomberg FCI</div><div class="card-name">彭博金融狀況指數</div></div><div class="dot yellow"></div></div>
+        <div class="card-value">-0.72</div>
+        <div class="card-change change-down-bad">▼ 0.17 (-30.9%)</div>
+        <div class="bar-track"><div class="bar-fill red" style="width:72%"></div></div>
+        <div class="bar-labels"><span class="lbl-green">0</span><span class="lbl-red">-1</span></div>
+        <div class="card-target">Target: &gt; 0 (寬鬆)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 避險 & 商品 -->
+  <div>
+    <div class="section-label">避險資產與商品 SAFE HAVEN &amp; COMMODITIES</div>
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-head"><div><div class="card-sub">XAU/USD</div><div class="card-name">黃金現貨</div></div><div class="dot yellow"></div></div>
+        <div class="card-value">$4,623</div>
+        <div class="card-change change-up-bad">▼ $127 (-2.7%)</div>
+        <div class="bar-track"><div class="bar-fill yellow" style="width:52%"></div></div>
+        <div class="bar-labels"><span class="lbl-green">4000</span><span class="lbl-red">5200</span></div>
+        <div class="card-target">避險溫度計</div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div><div class="card-sub">DXY Index</div><div class="card-name">美元指數</div></div><div class="dot yellow"></div></div>
+        <div class="card-value">100.13</div>
+        <div class="card-change change-up-bad">▲ 0.63 (+0.6%)</div>
+        <div class="bar-track"><div class="bar-fill yellow" style="width:3%"></div></div>
+        <div class="bar-labels"><span class="lbl-green">100</span><span class="lbl-red">106</span></div>
+        <div class="card-target">Target: &lt; 103</div>
+      </div>
+      <div class="card red-border">
+        <div class="card-head"><div><div class="card-sub">CL1 Front Month</div><div class="card-name">WTI 原油現金期貨</div></div><div class="dot red"></div></div>
+        <div class="card-value">$111.54</div>
+        <div class="card-change change-up-bad">▲ $11.42 (+11.4%)</div>
+        <div class="bar-track"><div class="bar-fill red" style="width:100%"></div></div>
+        <div class="bar-labels"><span class="lbl-green">70</span><span class="lbl-red">100</span></div>
+        <div class="card-target">Target: &lt; $85</div>
+      </div>
+      <div class="card red-border">
+        <div class="card-head"><div><div class="card-sub">CO1 Front Month</div><div class="card-name">布蘭特原油現金期貨</div></div><div class="dot red"></div></div>
+        <div class="card-value">$109.03</div>
+        <div class="card-change change-up-bad">▲ $7.87 (+7.8%)</div>
+        <div class="bar-track"><div class="bar-fill red" style="width:100%"></div></div>
+        <div class="bar-labels"><span class="lbl-green">75</span><span class="lbl-red">105</span></div>
+        <div class="card-target">Target: &lt; $90</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ COLUMN 3 ═══════ -->
+<div class="col col-3">
+
+  <!-- Bottom Checklist -->
+  <div>
+    <div class="section-label">底部量化驗證清單 MARKET BOTTOM CHECKLIST</div>
+    <div class="checklist-box">
+      <div class="checklist-header">
+        <div class="checklist-title">&#127919; 7日滾動驗證 (03/25→04/02)</div>
+        <span class="checklist-score" style="background:#eab30820;color:#eab308">5 / 8 達標</span>
+      </div>
+      <div class="check-row"><div class="check-box"></div><div class="check-label">巴菲特指標回落至合理區間</div><div class="check-vals">205.3% 7d:200.8~205.3 | &lt; 160%</div></div>
+      <div class="check-row"><div class="check-box"></div><div class="check-label">CAPE 回落至 20-25x</div><div class="check-vals">32.5x 7d:31.5~32.5 | 20-25x</div></div>
+      <div class="check-row"><div class="check-box met">✓</div><div class="check-label" style="color:#e2e8f0">VIX 噴出後底背離</div><div class="check-vals" style="color:#22c55e">24.54 盤高42.1→24.5 | 背離成立</div></div>
+      <div class="check-row"><div class="check-box met">✓</div><div class="check-label" style="color:#e2e8f0">恐懼與貪婪指數極度恐懼</div><div class="check-vals" style="color:#22c55e">18 7d:4天&lt;15 | 極度恐懼確認</div></div>
+      <div class="check-row"><div class="check-box"></div><div class="check-label">Put/Call Ratio 極端悲觀</div><div class="check-vals">1.05 7d峰值1.42 | &ge; 1.5</div></div>
+      <div class="check-row"><div class="check-box met">✓</div><div class="check-label" style="color:#e2e8f0">巨量換手 + 縮量止跌</div><div class="check-vals" style="color:#22c55e">98M 7d:162M→98M | 型態成立</div></div>
+      <div class="check-row"><div class="check-box met">✓</div><div class="check-label" style="color:#e2e8f0">高收益債利差見頂回落</div><div class="check-vals" style="color:#22c55e">346bps 7d:395→346 -12%</div></div>
+      <div class="check-row"><div class="check-box met">✓</div><div class="check-label" style="color:#e2e8f0">VIX 快速回落確認賣壓結束</div><div class="check-vals" style="color:#22c55e">24.54 7d:35.2→24.5 &lt;25</div></div>
+    </div>
+  </div>
+
+  <!-- Liquidity Combos -->
+  <div>
+    <div class="section-label">流動性組合警示 LIQUIDITY ALERTS</div>
+    <div class="combo-box">
+      <div class="combo-title">&#9889; 組合觸發狀態</div>
+      <div class="combo-row">
+        <div class="combo-dot" style="background:#eab308"></div>
+        <div class="combo-label">ON RRP 低 + SOFR &gt; IORB</div>
+        <div class="combo-badge" style="color:#eab308">&#x1F7E1; TRIGGERED | 高</div>
+      </div>
+      <div class="combo-row">
+        <div class="combo-dot" style="background:#eab308"></div>
+        <div class="combo-label">TGA 大升 + ON RRP 已低</div>
+        <div class="combo-badge" style="color:#eab308">&#x1F7E1; TRIGGERED | 高</div>
+      </div>
+      <div class="combo-row">
+        <div class="combo-dot" style="background:#f97316"></div>
+        <div class="combo-label">SOFR &gt; IORB + SRF 跳升</div>
+        <div class="combo-badge" style="color:#f97316">&#x1F7E0; TRIGGERED | 很高</div>
+      </div>
+      <div class="combo-row">
+        <div class="combo-dot" style="background:#ef4444;box-shadow:0 0 6px #ef444480"></div>
+        <div class="combo-label">ON RRP 低 + TGA 大升 + SOFR &gt; IORB</div>
+        <div class="combo-badge" style="color:#ef4444">&#x1F534; TRIGGERED | 最高</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Three Rules -->
+  <div>
+    <div class="section-label">三條生存原則 SURVIVAL RULES</div>
+    <div class="rules-box">
+      <div class="rule-item">
+        <div class="rule-num">RULE 01</div>
+        <div class="rule-text">不要急著進場，活到趨勢確立</div>
+        <div class="rule-en">Don't catch falling knives during systemic deleveraging.</div>
+      </div>
+      <div class="rule-item" style="margin-top:4px">
+        <div class="rule-num">RULE 02</div>
+        <div class="rule-text">擁抱實體短缺，遠離紙上富貴</div>
+        <div class="rule-en">Focus on physical shortages: AI infrastructure, precious metals, constrained commodities.</div>
+      </div>
+      <div class="rule-item" style="margin-top:4px">
+        <div class="rule-num">RULE 03</div>
+        <div class="rule-text">現金不是錯失機會，而是擁有選擇權</div>
+        <div class="rule-en">In a liquidity crisis, cash preserves optionality to buy systemic mispricings.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Key Logic Summary -->
+  <div>
+    <div class="section-label">關鍵判讀邏輯 KEY INTERPRETATION</div>
+    <div style="background:#0f172a;border:1px solid #334155;border-radius:6px;padding:7px 9px;font-size:7px;color:#94a3b8;line-height:1.7">
+      <b style="color:#e2e8f0">估值面：</b>巴菲特指標 220% 歷史極端高估，CAPE 需回落 20-25x。<br>
+      <b style="color:#e2e8f0">情緒面：</b>VIX 需噴出 40+ 後出現底背離；恐懼與貪婪需深跌至 10-15。<br>
+      <b style="color:#e2e8f0">流動性：</b>ON RRP + TGA + SOFR 三者同時「抽水」為最高警戒。<br>
+      <b style="color:#e2e8f0">利率面：</b>10Y 突破 4.5% 為壓力位；2s10s 結束倒掛常伴隨衰退。<br>
+      <b style="color:#e2e8f0">信用面：</b>HY 利差 500+ bps 進入危機模式；彭博 FCI 負值代表偏緊。<br>
+      <b style="color:#e2e8f0">商品面：</b>WTI/Brent 突破 $100 為停滯性通膨門檻；強美元壓縮利潤。
+    </div>
+  </div>
+
+</div>
+</div>
+
+<div class="footer">
+  &#9888; DATA AS OF 2026/04/02 CLOSE &nbsp;|&nbsp; 非即時報價 &nbsp;|&nbsp; NOT INVESTMENT ADVICE &nbsp;|&nbsp; Source: Uncle Stock Notes (大叔美股筆記)
+</div>
+
+</body>
+</html>
