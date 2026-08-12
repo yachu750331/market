@@ -23,28 +23,30 @@ const MOCK = {
   buffett: { value: 214.1, prev: 205.3, threshold: { green: 120, yellow: 160, red: 200 }, unit: "%", name: "巴菲特指標", sub: "Wilshire 5000 / GDP" },
   cape: { value: 42.0, prev: 32.5, threshold: { green: 20, yellow: 25, red: 30 }, unit: "x", name: "席勒本益比", sub: "Shiller CAPE Ratio" },
   // 恐慌情緒
-  vix: { value: 15.37, prev: 15.28, threshold: { green: 20, yellow: 30, red: 40 }, unit: "", name: "VIX 恐慌指數", sub: "S&P 500 隱含波動率" },
-  fearGreed: { value: 61, prev: 58, threshold: { green: 50, yellow: 30, red: 15 }, unit: "", name: "恐懼與貪婪", sub: "CNN Fear & Greed", invertColor: true },
-  putCall: { value: 0.55, prev: 0.60, threshold: { green: 0.7, yellow: 0.9, red: 1.2 }, unit: "", name: "Put/Call Ratio", sub: "CBOE 選擇權比率" },
+  vix: { value: 15.37, prev: 15.28, threshold: { green: 20, yellow: 30, red: 40 }, unit: "", name: "VIX 恐慌指數", sub: "S&P 500 隱含波動率", scaleMin: 10, scaleMax: 50, leftMeaning: "極度平靜", rightMeaning: "恐慌噴出", reading: "低波動" },
+  fearGreed: { value: 61, prev: 58, threshold: { green: 50, yellow: 30, red: 15 }, unit: "", name: "恐懼與貪婪", sub: "CNN Fear & Greed", invertColor: true, scaleMin: 0, scaleMax: 100, leftMeaning: "極度恐懼", rightMeaning: "極度貪婪", reading: "貪婪" },
+  putCall: { value: 0.55, prev: 0.60, threshold: { green: 0.7, yellow: 0.9, red: 1.2 }, unit: "", name: "Put/Call Ratio", sub: "CBOE 選擇權比率", scaleMin: 0.4, scaleMax: 1.5, leftMeaning: "極度樂觀", rightMeaning: "極度恐慌", reading: "偏樂觀" },
+  bofaBullBear: { value: 9.7, prev: 9.3, threshold: { green: 4, yellow: 7, red: 8 }, unit: "", name: "美銀牛熊指標", sub: "BofA Bull & Bear", scaleMin: 0, scaleMax: 10, leftMeaning: "極度看空/買訊", rightMeaning: "極度看多/賣訊", reading: "賣出訊號" },
   // 流動性
-  sofr_iorb: { value: 2.8, prev: 2.8, threshold: { green: 0, yellow: 1, red: 3 }, unit: "bps", name: "SOFR − IORB", sub: "短端資金壓力" },
-  onrrp: { value: 130, prev: 148, threshold: { green: 300, yellow: 200, red: 150 }, unit: "B", name: "ON RRP 餘額", sub: "流動性緩衝墊", invertColor: true },
-  tga: { value: 730, prev: 720, threshold: { green: 400, yellow: 600, red: 750 }, unit: "B", name: "TGA 餘額", sub: "財政部帳戶" },
-  srf: { value: 2.1, prev: 2.1, threshold: { green: 0, yellow: 1, red: 5 }, unit: "B", name: "SRF 使用量", sub: "Fed 後備工具" },
+  sofr_iorb: { value: 2.8, prev: 2.8, threshold: { green: 0, yellow: 1, red: 3 }, unit: "bps", name: "SOFR − IORB", sub: "短端資金壓力", leftMeaning: "資金寬鬆", rightMeaning: "資金緊俏" },
+  onrrp: { value: 130, prev: 148, threshold: { green: 300, yellow: 200, red: 150 }, unit: "B", name: "ON RRP 餘額", sub: "流動性緩衝墊", invertColor: true, leftMeaning: "緩衝充足", rightMeaning: "緩衝枯竭" },
+  tga: { value: 730, prev: 720, threshold: { green: 400, yellow: 600, red: 750 }, unit: "B", name: "TGA 餘額", sub: "財政部帳戶", leftMeaning: "抽水緩和", rightMeaning: "大量抽水" },
+  srf: { value: 2.1, prev: 2.1, threshold: { green: 0, yellow: 1, red: 5 }, unit: "B", name: "SRF 使用量", sub: "Fed 後備工具", leftMeaning: "未動用", rightMeaning: "大量動用" },
   // 債券與利率
-  us10y: { value: 4.654, prev: 4.684, threshold: { green: 3.5, yellow: 4.0, red: 4.5 }, unit: "%", name: "美債 10Y 殖利率", sub: "US Treasury 10Y" },
-  us2y: { value: 4.178, prev: 4.218, threshold: { green: 3.0, yellow: 3.5, red: 4.0 }, unit: "%", name: "美債 2Y 殖利率", sub: "US Treasury 2Y" },
-  spread2s10s: { value: 0.476, prev: 0.466, threshold: { green: 0.5, yellow: 0.2, red: 0 }, unit: "%", name: "2Y-10Y 利差", sub: "殖利率曲線斜率", invertColor: true },
-  breakeven: { value: 2.35, prev: 2.34, threshold: { green: 2.0, yellow: 2.5, red: 3.0 }, unit: "%", name: "10Y 通膨預期", sub: "Breakeven Inflation" },
-  move: { value: 72, prev: 72.15, threshold: { green: 80, yellow: 100, red: 120 }, unit: "", name: "MOVE Index", sub: "美債波動率" },
+  us10y: { value: 4.654, prev: 4.684, threshold: { green: 3.5, yellow: 4.0, red: 4.5 }, unit: "%", name: "美債 10Y 殖利率", sub: "US Treasury 10Y", leftMeaning: "利率偏低", rightMeaning: "利率壓力" },
+  us2y: { value: 4.178, prev: 4.218, threshold: { green: 3.0, yellow: 3.5, red: 4.0 }, unit: "%", name: "美債 2Y 殖利率", sub: "US Treasury 2Y", leftMeaning: "利率偏低", rightMeaning: "利率偏高" },
+  spread2s10s: { value: 0.476, prev: 0.466, threshold: { green: 0.5, yellow: 0.2, red: 0 }, unit: "%", name: "2Y-10Y 利差", sub: "殖利率曲線斜率", invertColor: true, leftMeaning: "曲線正常", rightMeaning: "倒掛邊緣" },
+  breakeven: { value: 2.35, prev: 2.34, threshold: { green: 2.0, yellow: 2.5, red: 3.0 }, unit: "%", name: "10Y 通膨預期", sub: "Breakeven Inflation", leftMeaning: "通膨溫和", rightMeaning: "通膨升溫" },
+  move: { value: 72, prev: 72.15, threshold: { green: 80, yellow: 100, red: 120 }, unit: "", name: "MOVE Index", sub: "美債波動率", leftMeaning: "債市平靜", rightMeaning: "債市動盪" },
   // 信用與金融狀況
-  hySpread: { value: 271, prev: 280, threshold: { green: 300, yellow: 400, red: 500 }, unit: "bps", name: "高收益債利差", sub: "HY OAS Spread" },
-  bloomberg: { value: -0.60, prev: -0.72, threshold: { green: 0, yellow: -0.5, red: -1.0 }, unit: "", name: "彭博金融狀況", sub: "Bloomberg FCI", invertColor: true },
+  hySpread: { value: 271, prev: 280, threshold: { green: 300, yellow: 400, red: 500 }, unit: "bps", name: "高收益債利差", sub: "HY OAS Spread", leftMeaning: "信用寬鬆", rightMeaning: "信用危機" },
+  bloomberg: { value: -0.60, prev: -0.72, threshold: { green: 0, yellow: -0.5, red: -1.0 }, unit: "", name: "彭博金融狀況", sub: "Bloomberg FCI", invertColor: true, leftMeaning: "金融寬鬆", rightMeaning: "金融緊縮" },
   // 避險與商品
   gold: { value: 4424, prev: 4370, threshold: { green: 4000, yellow: 4800, red: 5200 }, unit: "$", name: "黃金現貨", sub: "XAU/USD" },
   wti: { value: 83.94, prev: 84.50, threshold: { green: 70, yellow: 85, red: 100 }, unit: "$", name: "WTI 原油現金期貨", sub: "CL1 Front Month" },
   brent: { value: 89.60, prev: 90.20, threshold: { green: 75, yellow: 90, red: 105 }, unit: "$", name: "布蘭特原油現金期貨", sub: "CO1 Front Month" },
   dxy: { value: 99.84, prev: 100.30, threshold: { green: 100, yellow: 103, red: 106 }, unit: "", name: "美元指數", sub: "DXY Index" },
+  jpy: { value: 159.34, prev: 159.29, threshold: { green: 145, yellow: 155, red: 162 }, unit: "", name: "日圓匯率", sub: "USD/JPY・弱勢=套利/干預風險" },
   // 大盤
   sp500: { value: 7734.77, prev: 7753.40, name: "S&P 500", sub: "標普500指數" },
   nasdaq: { value: 26459.35, prev: 26605.70, name: "NASDAQ", sub: "那斯達克綜合" },
@@ -184,6 +186,9 @@ function MetricCard({ id, data, showGauge }) {
         {data.unit && data.unit !== "$" && (
           <span style={{ fontSize: 13, color: "#64748b", fontFamily: "'JetBrains Mono', monospace" }}>{data.unit}</span>
         )}
+        {data.reading && (
+          <span style={{ fontSize: 12, color: "#94a3b8", fontWeight: 600 }}>（{data.reading}）</span>
+        )}
       </div>
       <div style={{ fontSize: 12, fontFamily: "'JetBrains Mono', monospace", color: isUp ? (signal === "green" || data.invertColor ? "#22c55e" : "#ef4444") : (signal === "green" || data.invertColor ? "#ef4444" : "#22c55e") }}>
         {isUp ? "▲" : "▼"} {Math.abs(change).toFixed(change > 100 ? 0 : 2)} ({Math.abs(pct).toFixed(1)}%)
@@ -191,17 +196,26 @@ function MetricCard({ id, data, showGauge }) {
       {data.threshold && (() => {
         const { green, red } = data.threshold;
         const inv = data.invertColor;
-        // For normal: green=safe(low), red=danger(high). Bar goes 0%(green) → 100%(red)
-        // For inverted: green=safe(high), red=danger(low). Bar goes 0%(green) → 100%(red)
-        const lo = inv ? red : green;
-        const hi = inv ? green : red;
-        const rangeMin = Math.min(lo, hi);
-        const rangeMax = Math.max(lo, hi);
-        const pctRaw = rangeMax === rangeMin ? 50 : ((data.value - rangeMin) / (rangeMax - rangeMin)) * 100;
-        const pctBar = inv ? (100 - Math.min(100, Math.max(0, pctRaw))) : Math.min(100, Math.max(0, pctRaw));
-        const leftLabel = inv ? hi : lo;
-        const rightLabel = inv ? lo : hi;
         const fmt = (v) => Math.abs(v) >= 100 ? v.toFixed(0) : v % 1 === 0 ? v.toString() : v.toFixed(1);
+        // 若有自訂刻度（scaleMin/scaleMax），bar 兩端顯示理論極端值/常用區間 + 中文意義
+        const hasScale = data.scaleMin !== undefined && data.scaleMax !== undefined;
+        let pctBar, leftText, rightText;
+        if (hasScale) {
+          const raw = ((data.value - data.scaleMin) / (data.scaleMax - data.scaleMin)) * 100;
+          pctBar = Math.min(100, Math.max(0, raw));
+          leftText = `${fmt(data.scaleMin)}${data.leftMeaning ? ` (${data.leftMeaning})` : ""}`;
+          rightText = `${fmt(data.scaleMax)}${data.rightMeaning ? ` (${data.rightMeaning})` : ""}`;
+        } else {
+          // For normal: green=safe(low), red=danger(high). Bar goes 0%(green) → 100%(red)
+          const lo = inv ? red : green;
+          const hi = inv ? green : red;
+          const rangeMin = Math.min(lo, hi);
+          const rangeMax = Math.max(lo, hi);
+          const pctRaw = rangeMax === rangeMin ? 50 : ((data.value - rangeMin) / (rangeMax - rangeMin)) * 100;
+          pctBar = inv ? (100 - Math.min(100, Math.max(0, pctRaw))) : Math.min(100, Math.max(0, pctRaw));
+          leftText = `${fmt(inv ? hi : lo)}${data.leftMeaning ? ` (${data.leftMeaning})` : ""}`;
+          rightText = `${fmt(inv ? lo : hi)}${data.rightMeaning ? ` (${data.rightMeaning})` : ""}`;
+        }
         return (
           <div style={{ marginTop: 10 }}>
             <div style={{ height: 4, background: "#0f172a", borderRadius: 2, overflow: "hidden", position: "relative" }}>
@@ -212,9 +226,9 @@ function MetricCard({ id, data, showGauge }) {
                 transition: "width 0.5s ease",
               }} />
             </div>
-            <div style={{ display: "flex", justifyContent: "space-between", marginTop: 2 }}>
-              <span style={{ fontSize: 9, color: "#22c55e", fontFamily: "'JetBrains Mono', monospace" }}>{fmt(leftLabel)}</span>
-              <span style={{ fontSize: 9, color: "#ef4444", fontFamily: "'JetBrains Mono', monospace" }}>{fmt(rightLabel)}</span>
+            <div style={{ display: "flex", justifyContent: "space-between", marginTop: 2, gap: 8 }}>
+              <span style={{ fontSize: 9, color: "#22c55e", fontFamily: "'JetBrains Mono', monospace" }}>{leftText}</span>
+              <span style={{ fontSize: 9, color: "#ef4444", fontFamily: "'JetBrains Mono', monospace", textAlign: "right" }}>{rightText}</span>
             </div>
           </div>
         );
@@ -398,10 +412,10 @@ function Dashboard() {
   const overallColor = redCount >= 6 ? "#ef4444" : redCount >= 4 ? "#f97316" : redCount >= 2 ? "#eab308" : "#22c55e";
 
   const sectionMap = {
-    valuation: ["buffett", "cape", "vix", "fearGreed", "putCall"],
+    valuation: ["buffett", "cape", "vix", "fearGreed", "putCall", "bofaBullBear"],
     liquidity: ["sofr_iorb", "onrrp", "tga", "srf"],
     rates: ["us10y", "us2y", "spread2s10s", "breakeven", "move", "hySpread", "bloomberg"],
-    commodities: ["gold", "wti", "brent", "dxy"],
+    commodities: ["gold", "wti", "brent", "dxy", "jpy"],
   };
 
   const renderCards = (keys) => (
