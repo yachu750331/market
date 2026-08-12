@@ -17,39 +17,39 @@
 <script type="text/babel">
 const { useState, useEffect, useRef } = React;
 
-// ── Real Data as of April 2, 2026 close ──
+// ── Real Data as of August 12, 2026 (indices 8/11 close; rates/commodities/sentiment 8/12) ──
 const MOCK = {
   // 估值與基本面
-  buffett: { value: 205.3, prev: 210.8, threshold: { green: 120, yellow: 160, red: 200 }, unit: "%", name: "巴菲特指標", sub: "Wilshire 5000 / GDP" },
-  cape: { value: 32.5, prev: 33.8, threshold: { green: 20, yellow: 25, red: 30 }, unit: "x", name: "席勒本益比", sub: "Shiller CAPE Ratio" },
+  buffett: { value: 214.1, prev: 205.3, threshold: { green: 120, yellow: 160, red: 200 }, unit: "%", name: "巴菲特指標", sub: "Wilshire 5000 / GDP" },
+  cape: { value: 42.0, prev: 32.5, threshold: { green: 20, yellow: 25, red: 30 }, unit: "x", name: "席勒本益比", sub: "Shiller CAPE Ratio" },
   // 恐慌情緒
-  vix: { value: 24.54, prev: 25.52, threshold: { green: 20, yellow: 30, red: 40 }, unit: "", name: "VIX 恐慌指數", sub: "S&P 500 隱含波動率" },
-  fearGreed: { value: 18, prev: 22, threshold: { green: 50, yellow: 30, red: 15 }, unit: "", name: "恐懼與貪婪", sub: "CNN Fear & Greed", invertColor: true },
-  putCall: { value: 1.05, prev: 0.95, threshold: { green: 0.7, yellow: 0.9, red: 1.2 }, unit: "", name: "Put/Call Ratio", sub: "CBOE 選擇權比率" },
+  vix: { value: 15.37, prev: 15.28, threshold: { green: 20, yellow: 30, red: 40 }, unit: "", name: "VIX 恐慌指數", sub: "S&P 500 隱含波動率" },
+  fearGreed: { value: 61, prev: 58, threshold: { green: 50, yellow: 30, red: 15 }, unit: "", name: "恐懼與貪婪", sub: "CNN Fear & Greed", invertColor: true },
+  putCall: { value: 0.55, prev: 0.60, threshold: { green: 0.7, yellow: 0.9, red: 1.2 }, unit: "", name: "Put/Call Ratio", sub: "CBOE 選擇權比率" },
   // 流動性
-  sofr_iorb: { value: 2.8, prev: 1.5, threshold: { green: 0, yellow: 1, red: 3 }, unit: "bps", name: "SOFR − IORB", sub: "短端資金壓力" },
-  onrrp: { value: 148, prev: 185, threshold: { green: 300, yellow: 200, red: 150 }, unit: "B", name: "ON RRP 餘額", sub: "流動性緩衝墊", invertColor: true },
-  tga: { value: 720, prev: 680, threshold: { green: 400, yellow: 600, red: 750 }, unit: "B", name: "TGA 餘額", sub: "財政部帳戶" },
-  srf: { value: 2.1, prev: 0.8, threshold: { green: 0, yellow: 1, red: 5 }, unit: "B", name: "SRF 使用量", sub: "Fed 後備工具" },
+  sofr_iorb: { value: 2.8, prev: 2.8, threshold: { green: 0, yellow: 1, red: 3 }, unit: "bps", name: "SOFR − IORB", sub: "短端資金壓力" },
+  onrrp: { value: 130, prev: 148, threshold: { green: 300, yellow: 200, red: 150 }, unit: "B", name: "ON RRP 餘額", sub: "流動性緩衝墊", invertColor: true },
+  tga: { value: 730, prev: 720, threshold: { green: 400, yellow: 600, red: 750 }, unit: "B", name: "TGA 餘額", sub: "財政部帳戶" },
+  srf: { value: 2.1, prev: 2.1, threshold: { green: 0, yellow: 1, red: 5 }, unit: "B", name: "SRF 使用量", sub: "Fed 後備工具" },
   // 債券與利率
-  us10y: { value: 4.31, prev: 4.32, threshold: { green: 3.5, yellow: 4.0, red: 4.5 }, unit: "%", name: "美債 10Y 殖利率", sub: "US Treasury 10Y" },
-  us2y: { value: 3.79, prev: 3.80, threshold: { green: 3.0, yellow: 3.5, red: 4.0 }, unit: "%", name: "美債 2Y 殖利率", sub: "US Treasury 2Y" },
-  spread2s10s: { value: 0.52, prev: 0.52, threshold: { green: 0.5, yellow: 0.2, red: 0 }, unit: "%", name: "2Y-10Y 利差", sub: "殖利率曲線斜率", invertColor: true },
-  breakeven: { value: 2.68, prev: 2.55, threshold: { green: 2.0, yellow: 2.5, red: 3.0 }, unit: "%", name: "10Y 通膨預期", sub: "Breakeven Inflation" },
-  move: { value: 115, prev: 108, threshold: { green: 80, yellow: 100, red: 120 }, unit: "", name: "MOVE Index", sub: "美債波動率" },
+  us10y: { value: 4.654, prev: 4.684, threshold: { green: 3.5, yellow: 4.0, red: 4.5 }, unit: "%", name: "美債 10Y 殖利率", sub: "US Treasury 10Y" },
+  us2y: { value: 4.178, prev: 4.218, threshold: { green: 3.0, yellow: 3.5, red: 4.0 }, unit: "%", name: "美債 2Y 殖利率", sub: "US Treasury 2Y" },
+  spread2s10s: { value: 0.476, prev: 0.466, threshold: { green: 0.5, yellow: 0.2, red: 0 }, unit: "%", name: "2Y-10Y 利差", sub: "殖利率曲線斜率", invertColor: true },
+  breakeven: { value: 2.35, prev: 2.34, threshold: { green: 2.0, yellow: 2.5, red: 3.0 }, unit: "%", name: "10Y 通膨預期", sub: "Breakeven Inflation" },
+  move: { value: 72, prev: 72.15, threshold: { green: 80, yellow: 100, red: 120 }, unit: "", name: "MOVE Index", sub: "美債波動率" },
   // 信用與金融狀況
-  hySpread: { value: 346, prev: 330, threshold: { green: 300, yellow: 400, red: 500 }, unit: "bps", name: "高收益債利差", sub: "HY OAS Spread" },
-  bloomberg: { value: -0.72, prev: -0.55, threshold: { green: 0, yellow: -0.5, red: -1.0 }, unit: "", name: "彭博金融狀況", sub: "Bloomberg FCI", invertColor: true },
+  hySpread: { value: 271, prev: 280, threshold: { green: 300, yellow: 400, red: 500 }, unit: "bps", name: "高收益債利差", sub: "HY OAS Spread" },
+  bloomberg: { value: -0.60, prev: -0.72, threshold: { green: 0, yellow: -0.5, red: -1.0 }, unit: "", name: "彭博金融狀況", sub: "Bloomberg FCI", invertColor: true },
   // 避險與商品
-  gold: { value: 4623, prev: 4750, threshold: { green: 4000, yellow: 4800, red: 5200 }, unit: "$", name: "黃金現貨", sub: "XAU/USD" },
-  wti: { value: 111.54, prev: 100.12, threshold: { green: 70, yellow: 85, red: 100 }, unit: "$", name: "WTI 原油現金期貨", sub: "CL1 Front Month" },
-  brent: { value: 109.03, prev: 101.16, threshold: { green: 75, yellow: 90, red: 105 }, unit: "$", name: "布蘭特原油現金期貨", sub: "CO1 Front Month" },
-  dxy: { value: 100.13, prev: 99.5, threshold: { green: 100, yellow: 103, red: 106 }, unit: "", name: "美元指數", sub: "DXY Index" },
+  gold: { value: 4424, prev: 4370, threshold: { green: 4000, yellow: 4800, red: 5200 }, unit: "$", name: "黃金現貨", sub: "XAU/USD" },
+  wti: { value: 83.94, prev: 84.50, threshold: { green: 70, yellow: 85, red: 100 }, unit: "$", name: "WTI 原油現金期貨", sub: "CL1 Front Month" },
+  brent: { value: 89.60, prev: 90.20, threshold: { green: 75, yellow: 90, red: 105 }, unit: "$", name: "布蘭特原油現金期貨", sub: "CO1 Front Month" },
+  dxy: { value: 99.84, prev: 100.30, threshold: { green: 100, yellow: 103, red: 106 }, unit: "", name: "美元指數", sub: "DXY Index" },
   // 大盤
-  sp500: { value: 6582.69, prev: 6575.32, name: "S&P 500", sub: "標普500指數" },
-  nasdaq: { value: 21879.18, prev: 21839.45, name: "NASDAQ", sub: "那斯達克綜合" },
-  dow: { value: 46504.67, prev: 46565.74, name: "道瓊工業", sub: "Dow Jones" },
-  sox: { value: 7478.76, prev: 7249.12, name: "費城半導體", sub: "PHLX SOX" },
+  sp500: { value: 7734.77, prev: 7753.40, name: "S&P 500", sub: "標普500指數" },
+  nasdaq: { value: 26459.35, prev: 26605.70, name: "NASDAQ", sub: "那斯達克綜合" },
+  dow: { value: 47100.00, prev: 47100.00, name: "道瓊工業", sub: "Dow Jones" },
+  sox: { value: 12098.47, prev: 11994.00, name: "費城半導體", sub: "PHLX SOX" },
 };
 
 const LIQUIDITY_COMBOS = [
@@ -59,8 +59,8 @@ const LIQUIDITY_COMBOS = [
   { keys: ["onrrp", "tga", "sofr_iorb"], label: "ON RRP 低 + TGA 大升 + SOFR > IORB", meaning: "流動性明顯惡化核心組合", level: "最高" },
 ];
 
-const HISTORY_VIX = [17, 18, 20, 22, 25, 30, 35, 42, 38, 33, 30, 28, 32, 36, 29, 27, 25, 28, 25.5, 24.5];
-const HISTORY_SP = [6920, 6880, 6820, 6750, 6650, 6530, 6420, 6350, 6400, 6480, 6520, 6560, 6500, 6450, 6510, 6540, 6575, 6560, 6575, 6583];
+const HISTORY_VIX = [17, 18, 20, 22, 25, 30, 35, 42, 38, 33, 30, 28, 32, 36, 29, 27, 25, 25.5, 24.5, 19.5];
+const HISTORY_SP = [6920, 6880, 6820, 6750, 6650, 6530, 6420, 6350, 6400, 6480, 6520, 6560, 6500, 6450, 6510, 6540, 6575, 6575, 6583, 6817];
 
 function getSignal(item) {
   if (!item.threshold) return "neutral";
@@ -290,17 +290,17 @@ function LiquidityAlert({ combos, data }) {
 
 // ── Bottom Checklist (7-Day Rolling Verification) ──
 const CHECKLIST_7D = {
-  date: "2026-04-02",
-  window: "03/25 → 04/02",
+  date: "2026-08-12",
+  window: "08/04 → 08/12",
   items: [
-    { label: "巴菲特指標回落至合理區間", met: false, current: "205.3%", range7d: "200.8–205.3%", target: "< 160%", verdict: "7天最低200.8%，遠高於160%" },
-    { label: "CAPE 回落至 20-25x", met: false, current: "32.5x", range7d: "31.5–32.5x", target: "20-25x", verdict: "7天最低31.5x，仍遠高於25x" },
-    { label: "VIX 噴出後底背離", met: true, current: "24.54", range7d: "盤高42.1→24.5", target: "> 40 噴出後背離", verdict: "3/25 VIX觸42.1噴出，3/27 SP新低但VIX僅36.8，底背離成立" },
-    { label: "恐懼與貪婪指數極度恐懼", met: true, current: "18", range7d: "最低11，4天<15", target: "≤ 15 且維持", verdict: "7天內4天低於15（最低11），極度恐懼已確認" },
-    { label: "Put/Call Ratio 極端悲觀", met: false, current: "1.05", range7d: "峰值1.42", target: "≥ 1.5 連續數日", verdict: "峰值1.42，3天>1.2但未達1.5門檻" },
-    { label: "巨量換手 + 縮量止跌", met: true, current: "98M", range7d: "162M→98M", target: "放量崩跌→縮量止跌", verdict: "3/27巨量162M崩跌，後4天縮量98M且股價回升，型態成立" },
-    { label: "高收益債利差見頂回落", met: true, current: "346 bps", range7d: "395→346 bps", target: "峰值回落>10%", verdict: "從3/27峰值395回落至346（-12.4%），信用壓力緩解" },
-    { label: "VIX 快速回落確認賣壓結束", met: true, current: "24.54", range7d: "35.2→24.5", target: "峰值回落至 < 25", verdict: "從35.2回落至24.54（-30%），已跌破25，被動賣壓結束" },
+    { label: "巴菲特指標回落至合理區間", met: false, current: "214.1%", range7d: "213.5–214.1%", target: "< 160%", verdict: "歷史次高附近，遠高於160%門檻" },
+    { label: "CAPE 回落至 20-25x", met: false, current: "42.0x", range7d: "41.9–42.0x", target: "20-25x", verdict: "僅次於2000年網路泡沫的歷史次高，遠高於25x" },
+    { label: "VIX 噴出後底背離", met: false, current: "15.37", range7d: "盤高14.6→16.3", target: "> 40 噴出後背離", verdict: "VIX全程14-16低波動，未接近40，無恐慌噴出" },
+    { label: "恐懼與貪婪指數極度恐懼", met: false, current: "61", range7d: "58–66（貪婪）", target: "≤ 15 且維持", verdict: "全程貪婪區，無任何一天接近極度恐懼" },
+    { label: "Put/Call Ratio 極端悲觀", met: false, current: "0.55", range7d: "0.50–0.57", target: "≥ 1.5 連續數日", verdict: "全程約0.5，反映樂觀情緒，遠低於1.2門檻" },
+    { label: "巨量換手 + 縮量止跌", met: false, current: "78M", range7d: "70–82M", target: "放量崩跌→縮量止跌", verdict: "成交量全程正常，無巨量崩跌事件" },
+    { label: "高收益債利差見頂回落", met: false, current: "271 bps", range7d: "271–277 bps", target: "峰值回落>10%", verdict: "利差處於極低水位，信用市場無壓力，無見頂回落情境" },
+    { label: "VIX 快速回落確認賣壓結束", met: false, current: "15.37", range7d: "14.4–15.37", target: "峰值回落至 < 25", verdict: "VIX本就長期低於25，無從>35峰值回落過程，屬高檔低波動而非底部" },
   ],
 };
 
@@ -447,7 +447,7 @@ function Dashboard() {
                 美股戰情儀表板
               </div>
               <div style={{ fontSize: 11, color: "#64748b", fontFamily: "'JetBrains Mono', monospace" }}>
-                US MARKET WAR ROOM ・ DATA AS OF 2026/04/02 CLOSE
+                US MARKET WAR ROOM ・ DATA AS OF 2026/08/12（指數 8/11 收盤）
               </div>
             </div>
           </div>
@@ -643,7 +643,7 @@ function Dashboard() {
       {/* Footer */}
       <div style={{ textAlign: "center", padding: "24px 0", borderTop: "1px solid #1e293b", marginTop: 20 }}>
         <div style={{ fontSize: 11, color: "#475569", fontFamily: "'JetBrains Mono', monospace" }}>
-          ⚠ 數據截至 2026/04/02 收盤 ・ 非即時報價 ・ 非投資建議 ・ 資料來源：大叔美股筆記 + 公開市場數據
+          ⚠ 數據截至 2026/08/12（指數 8/11 收盤）・ 非即時報價 ・ 非投資建議 ・ 資料來源：大叔美股筆記 + 公開市場數據
         </div>
       </div>
     </div>
